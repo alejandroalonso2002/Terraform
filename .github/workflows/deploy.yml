@@ -1,0 +1,41 @@
+name: Despliegue Terraform con LocalStack
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      localstack:
+        image: localstack/localstack:latest
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: s3
+          DEFAULT_REGION: eu-west-1
+        options: --health-cmd="curl -f http://localhost:4566/_localstack/health" --health-interval=5s --health-timeout=2s --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Inicializar Terraform
+        run: terraform init
+
+      - name: Plan de Terraform
+        run: terraform plan
+
+      - name: Aplicar Terraform
+        run: terraform apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_REGION: eu-west-1
