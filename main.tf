@@ -13,5 +13,5 @@ provider "aws" {
 
 module "mi_bucket_modularizado" {
   source      = "./modules/mi-recurso"
-  bucket_name = "recurso-tarea-4"
+  bucket_name = "recurso-tarea-4-2"
 }
